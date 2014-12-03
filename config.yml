@@ -1,0 +1,3 @@
+dsn: 'dbi:SQLite:dbname=act.sqlite'
+api_interface: '/api'
+web_interface: '/'

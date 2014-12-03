@@ -1,0 +1,3 @@
+#!/bin/sh
+
+perl -Ilib -Ilocal/perl5/lib $@

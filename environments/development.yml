@@ -1,0 +1,2 @@
+dsn: 'dbi:SQLite:dbname=act.sqlite'
+trace: 1
