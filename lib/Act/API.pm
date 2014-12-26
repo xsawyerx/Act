@@ -70,7 +70,7 @@ sub _request {
 }
 
 sub _search {
-    my ( $self, $args ) = @_;
+    my ( $self, $conf_id, $type, $args ) = @_;
 
     my $type   = $args->{'type'};
     my @params = map +(
@@ -92,18 +92,18 @@ sub _search {
 
 sub event {
     my ( $self, $args ) = @_;
-    $args->{'type'} //= 'event';
-    my $rs = $self->_search($args);
+
+    # complex search - ResultSet always
+    ref $args eq 'HASH'
+        and return $self->_search( event => $args );
 
     # asked for specific one
-    if ( $args->{'id'} ) {
-        $rs->total > 1
-            and croak 'Asked for a single event but got multiple';
+    my $rs = $self->_search( event => { id => $args } );
 
-        return $rs->next;
-    }
+    $rs->total > 1
+        and croak 'Asked for a single event but got multiple';
 
-    return $rs;
+    return $rs->next;
 }
 
 1;
