@@ -16,7 +16,7 @@ subtest '_search() with unsupported type' => sub {
     my $api = Act::API->new();
 
     like(
-        exception { $api->_search({ type=> 'NotSupported' }) },
+        exception { $api->_search( { type => 'NotSupported' } ) },
         qr{^Search type NotSupported is not supported},
         'Cannot search for an unsupported type',
     );
@@ -38,18 +38,20 @@ subtest '_search()' => sub {
                 return {
                     success => 1,
                     content => encode_json {
-                        results => [ sample_event ],
+                        results => [sample_event],
                     },
                 };
             },
         ),
     );
 
-    my $rs = $api->_search({
-        id       => 10,
-        type     => 'event',
-        conf_id  => 'myconf',
-    });
+    my $rs = $api->_search(
+        {
+            id      => 10,
+            type    => 'event',
+            conf_id => 'myconf',
+        }
+    );
 
     isa_ok( $rs, 'Act::ResultSet' );
 };
