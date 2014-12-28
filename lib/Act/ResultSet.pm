@@ -1,4 +1,5 @@
 package Act::ResultSet;
+
 # ABSTRACT: Act object for representing entity resultsets
 
 use Moo;
@@ -43,7 +44,7 @@ sub next {
 
     defined $item or return;
 
-    my $class = 'Act::Entity::' . ucfirst lc $self->type;
+    my $class = 'Act::Entity::' . $self->type;
     load_class($class);
 
     return $class->new($item);

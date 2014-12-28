@@ -10,13 +10,12 @@ subtest 'Defaults' => sub {
     ok(
         exception { Act::ResultSet->new },
         'Cannot create resultset without type',
-    );    
+    );
 
     my $rs;
     is(
-        exception { $rs = Act::ResultSet->new( type => 'event' ) },
-        undef,
-        'Create resultset with type',
+        exception { $rs = Act::ResultSet->new( type => 'Event' ) },
+        undef, 'Create resultset with type',
     );
 
     isa_ok( $rs, 'Act::ResultSet' );
@@ -25,8 +24,8 @@ subtest 'Defaults' => sub {
 
 subtest 'ResultSet all()' => sub {
     my $rs = Act::ResultSet->new(
-        type   => 'event',
-        items  => [ sample_event ],
+        type  => 'Event',
+        items => [sample_event],
     );
 
     is( $rs->total, 1, 'total() says only one event' );
@@ -36,8 +35,8 @@ subtest 'ResultSet all()' => sub {
 
 subtest 'ResultSet next() iterator' => sub {
     my $rs = Act::ResultSet->new(
-        type   => 'event',
-        items  => [ sample_event ],
+        type  => 'Event',
+        items => [sample_event],
     );
 
     my $count = 0;
@@ -55,4 +54,3 @@ subtest 'ResultSet next() iterator' => sub {
 
     is( $count, 1, 'Only one event through iterator' );
 };
-
