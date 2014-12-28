@@ -10,11 +10,16 @@ use t::lib::UserAgent;
 subtest 'Defaults' => sub {
     my $api = Act::API->new();
     can_ok( $api, 'event' );
+    like(
+        exception { $api->event() },
+        qr/^conf_id required/,
+        'event() must provide a conf_id or hashref',
+    );
 };
 
 my $single_result = {
     success => 1,
-    content => encode_json { results => [ sample_event ] },
+    content => encode_json { results => [sample_event] },
 };
 
 my $multiple_result = {
@@ -40,7 +45,7 @@ subtest 'event() with multi result when asked for one' => sub {
     );
 
     like(
-        exception { $api->event({ id => '30', conf_id => 'conf' }) },
+        exception { $api->event( 'conf', 30 ) },
         qr{^Asked for a single event but got multiple},
         'Multiple results with an ID crashed',
     );
@@ -63,8 +68,9 @@ subtest 'event() with one result when asked for one' => sub {
         )
     );
 
-    my ($event) = $api->event({ id => 30, conf_id => 'conf' });
-    isa_ok( $event, 'Act::Entity::Event' );
+    my @events = $api->event( 'conf', 30 );
+    is( scalar @events, 1, 'Only one result' );
+    isa_ok( $events[0], 'Act::Entity::Event' );
 };
 
 subtest 'event() with multi result' => sub {
@@ -84,8 +90,9 @@ subtest 'event() with multi result' => sub {
         )
     );
 
-    my ($rs) = $api->event({ conf_id => 'conf' });
-    isa_ok( $rs, 'Act::ResultSet' );
+    my @rs = $api->event( { conf_id => 'conf' } );
+    is( scalar @rs, 1, 'Only got one resultset' );
+    isa_ok( $rs[0], 'Act::ResultSet' );
 };
 
 subtest 'event() with no result when asked for one' => sub {
@@ -108,9 +115,8 @@ subtest 'event() with no result when asked for one' => sub {
         )
     );
 
-    my ($event) = $api->event({ id => 30, conf_id => 'conf' });
-    is( $event, undef, 'No event received' );
-
+    my @events = $api->event( conf => 30 );
+    is( scalar @events, 0, 'No events received' );
 };
 
 subtest 'event() with no result when asked for one' => sub {
@@ -133,6 +139,8 @@ subtest 'event() with no result when asked for one' => sub {
         )
     );
 
-    my ($rs) = $api->event({ conf_id => 'conf' });
-    isa_ok( $rs, 'Act::ResultSet', 'No event received' );
+    my @rs = $api->event( { conf_id => 'conf' } );
+    is( scalar @rs, 1, 'Only one resultset' );
+    isa_ok( $rs[0], 'Act::ResultSet', 'It is a resultset' );
+    is( $rs[0]->total, 0, 'No results in it' );
 };

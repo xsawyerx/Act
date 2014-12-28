@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 3;
+use Test::More tests => 4;
 use Test::Fatal;
 use JSON;
 use Act::API;
@@ -12,12 +12,22 @@ subtest 'Defaults' => sub {
     can_ok( $api, '_search' );
 };
 
+subtest '_search() without an entity' => sub {
+    my $api = Act::API->new();
+
+    like(
+        exception { $api->_search() },
+        qr{^Entity required},
+        'Cannot search without an entity',
+    );
+};
+
 subtest '_search() with unsupported type' => sub {
     my $api = Act::API->new();
 
     like(
-        exception { $api->_search( { type => 'NotSupported' } ) },
-        qr{^Search type NotSupported is not supported},
+        exception { $api->_search( NotSupported => {} ) },
+        qr{^Entity NotSupported is not supported},
         'Cannot search for an unsupported type',
     );
 };
@@ -46,9 +56,8 @@ subtest '_search()' => sub {
     );
 
     my $rs = $api->_search(
-        {
+        Event => {
             id      => 10,
-            type    => 'event',
             conf_id => 'myconf',
         }
     );
