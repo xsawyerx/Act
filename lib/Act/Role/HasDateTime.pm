@@ -16,7 +16,7 @@ around BUILDARGS => sub {
             = DateTime::Format::Pg->parse_datetime( $args{'datetime'} );
     }
 
-    return \%args;
+    return $class->$orig(%args);
 };
 
 1;
