@@ -41,3 +41,4 @@ requires 'URI' => 1.31;
 requires 'Wiki::Toolkit' => 0;   # Wiki::Toolkit::Formatter::Default Wiki::Toolkit::Store::Pg
 requires 'XML::Atom' => '0.20';  # XML::Atom::Entry XML::Atom::Feed XML::Atom::Link
 requires 'version' => 0;
+requires 'Template::Multilingual::Parser' => 0;

@@ -6,6 +6,7 @@ use MooX::Types::MooseLike::Base qw<Int Str InstanceOf>;
 with qw<
     Act::Role::Entity
     Act::Role::HasDateTime
+    Act::Role::Abstract
 >;
 
 has event_id => (

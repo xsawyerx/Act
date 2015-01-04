@@ -6,13 +6,12 @@ use HTTP::Request::Common;
 use JSON;
 use Try::Tiny;
 
-use Dancer2;
 use Act::Schema;
 use Act::Web::API;
 use t::corpus::Sample;
 
 Act::Web::API->setup(
-    Act::Schema->connect('dbi:SQLite:dbname=t/corpus/act.sqlite')
+    schema => Act::Schema->connect('dbi:SQLite:dbname=t/corpus/act.sqlite')
 );
 
 my $schema  = Act::Web::API->config->{'schema'};

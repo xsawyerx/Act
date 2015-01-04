@@ -20,11 +20,11 @@ hook before => sub {
 };
 
 sub setup {
-    my $class  = shift;
-    my $schema = shift;
+    my $class = shift;
+    my %opts  = @_;
 
-    set schema => $schema ||
-                  Act::Schema->connect( config->{'dsn'} );
+    $opts{'schema'} ||= Act::Schema->connect( config->{'dsn'} );
+    set $_ => $opts{$_} for keys %opts;
 
     # force all of the paths under this prefix
     prefix '/:conf_id' => sub {

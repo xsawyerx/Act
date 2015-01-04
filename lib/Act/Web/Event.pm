@@ -3,25 +3,29 @@ use Dancer2 appname => 'Act::Web';
 set auto_page => 1;
 
 use Act::Form;
-use Act::Abstract;
+#use Act::Abstract;
 use Act::Template::HTML;
 use DateTime::Format::Pg;
 
-my $act = Act::API->new( port => config->{'api_port'} );
+my $act = config->{'_act_api_object'};
 
 # Act::Handler::Event::Show
 get '/event/:event_id' => sub {
     my $event_id = param('event_id');
     $event_id =~ /^[0-9]$/ or pass;
 
-    my $event = $act->event({ id => $event_id });
-    $event->total > 0 or send_error( 404, 'Event not found' );
+    my $event = $act->event({
+        id      => $event_id,
+        conf_id => param('conf_id'),
+    });
+
+    $event->total > 0 or send_error( 'Event not found', 404 );
 
     my $template = Act::Template::HTML->new();
 
     $template->variables(
         %{$event},
-        chunked_abstract => Act::Abstract::chunked( $event->abstract ),
+        #chunked_abstract => Act::Abstract::chunked( $event->abstract ),
     );
 
     return $template->process('events/show');
@@ -97,6 +101,8 @@ post '/editevent' => sub {
     # apply default values
     $fields->{'duration'} ||= 0;
 
+    my $template = Act::Template::HTML->new();
+
     # is the date in range?
     if ( ! inflate_date( $fields, $form, $sdate, $edate ) ) {
         # map errors
@@ -112,9 +118,7 @@ post '/editevent' => sub {
         $template->variables( errors => \@errors );
     }
 
-    ...
-
-    my $template = Act::Template::HTML->new();
+    #...
 
     # XXX: config->{'rooms'} ?!?!
     #      (move to Act::API)
@@ -146,9 +150,9 @@ sub verify_event {
 }
 
 sub create_return_url {
-    my $referer    = request->referer;
-    my $return_url = param('return_url') || $referer
-        if $referer =~ m{/schdule};
+    my $referer = request->referer;
+    my $return_url;
+    $return_url = param('return_url') || $referer;
 }
 
 sub get_dates {
